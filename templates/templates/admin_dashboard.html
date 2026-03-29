@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard – ShareMyStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --clay: #C4714A; --deep: #1C2B1A; --cream: #FDFAF6;
+      --sand: #F5EFE6; --border: #E2D9CC; --muted: #7A7A6E;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--deep); }
+    nav {
+      background: var(--deep); color: white;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 5%;
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--clay); }
+    .nav-right { display: flex; align-items: center; gap: 1.5rem; font-size: 0.88rem; }
+    .nav-right a { color: #aaa; text-decoration: none; }
+    .nav-right a:hover { color: white; }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 2.5rem 5%; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+    .stat { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; }
+    .stat .num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--clay); }
+    .stat .label { font-size: 0.82rem; color: var(--muted); margin-top: 0.2rem; }
+    .flash { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 0.9rem 1.2rem; border-radius: 10px; margin-bottom: 1.5rem; font-size: 0.92rem; }
+    h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 1.2rem; }
+    .section { margin-bottom: 3rem; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); font-size: 0.88rem; }
+    th { background: var(--sand); text-align: left; padding: 0.85rem 1rem; font-weight: 500; color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    td { padding: 0.9rem 1rem; border-top: 1px solid var(--border); vertical-align: top; }
+    tr:hover td { background: #fafaf8; }
+    .owner { font-weight: 500; }
+    .phone { color: var(--muted); font-size: 0.82rem; }
+    .price { font-weight: 500; color: var(--clay); }
+    .date-range { color: var(--muted); font-size: 0.82rem; }
+    .btn-approve {
+      background: #2e7d32; color: white; border: none;
+      padding: 0.4rem 1rem; border-radius: 50px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      margin-right: 0.4rem;
+    }
+    .btn-approve:hover { background: #1b5e20; }
+    .btn-delete {
+      background: transparent; color: #c0392b; border: 1px solid #c0392b;
+      padding: 0.4rem 1rem; border-radius: 50px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+      cursor: pointer; text-decoration: none; display: inline-block;
+    }
+    .btn-delete:hover { background: #c0392b; color: white; }
+    .badge-live { background: #e8f5e9; color: #2e7d32; font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 50px; font-weight: 500; }
+    .empty { text-align: center; padding: 2.5rem; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">ShareMyStay — Admin</div>
+  <div class="nav-right">
+    <a href="/stays" target="_blank">View live site ↗</a>
+    <a href="/admin/logout">Log out</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash">✅ {{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <div class="stats">
+    <div class="stat">
+      <div class="num">{{ pending|length }}</div>
+      <div class="label">Pending approval</div>
+    </div>
+    <div class="stat">
+      <div class="num">{{ approved|length }}</div>
+      <div class="label">Live listings</div>
+    </div>
+    <div class="stat">
+      <div class="num">{{ pending|length + approved|length }}</div>
+      <div class="label">Total submissions</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⏳ Pending approval ({{ pending|length }})</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Owner</th>
+          <th>Dates & Price</th>
+          <th>Description</th>
+          <th>Submitted</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if pending %}
+          {% for l in pending %}
+          <tr>
+            <td>
+              <div style="font-weight:500;">{{ l.title }}</div>
+              <div style="color:var(--muted);font-size:0.82rem;">{{ l.city }} · {{ l.type }}</div>
+            </td>
+            <td>
+              <div class="owner">{{ l.name }}</div>
+              <div class="phone">📞 {{ l.phone }}</div>
+            </td>
+            <td>
+              <div class="price">₹{{ l.price }}/night</div>
+              <div class="date-range">{{ l.date_from }} – {{ l.date_to }}</div>
+            </td>
+            <td style="max-width:200px;color:var(--muted);font-size:0.82rem;">{{ l.description or '—' }}</td>
+            <td style="color:var(--muted);font-size:0.82rem;">{{ l.created_at.strftime('%d %b %Y') }}</td>
+            <td>
+              <a href="/admin/approve/{{ l.id }}" class="btn-approve">✓ Approve</a>
+              <a href="/admin/delete/{{ l.id }}" class="btn-delete" onclick="return confirm('Delete this listing?')">✕ Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="6" class="empty">No pending listings — you're all caught up! 🎉</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>✅ Live listings ({{ approved|length }})</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Owner</th>
+          <th>Dates & Price</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if approved %}
+          {% for l in approved %}
+          <tr>
+            <td>
+              <div style="font-weight:500;">{{ l.title }}</div>
+              <div style="color:var(--muted);font-size:0.82rem;">{{ l.city }} · {{ l.type }}</div>
+            </td>
+            <td>
+              <div class="owner">{{ l.name }}</div>
+              <div class="phone">📞 {{ l.phone }}</div>
+            </td>
+            <td>
+              <div class="price">₹{{ l.price }}/night</div>
+              <div class="date-range">{{ l.date_from }} – {{ l.date_to }}</div>
+            </td>
+            <td><span class="badge-live">● Live</span></td>
+            <td>
+              <a href="/admin/delete/{{ l.id }}" class="btn-delete" onclick="return confirm('Remove this listing?')">✕ Remove</a>
+            </td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="5" class="empty">No approved listings yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</body>
+</html>
