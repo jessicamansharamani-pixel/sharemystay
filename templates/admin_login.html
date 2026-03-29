@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login – ShareMyStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --clay: #C4714A; --deep: #1C2B1A; --cream: #FDFAF6;
+      --border: #E2D9CC; --muted: #7A7A6E;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--deep); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .box { background: var(--cream); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 380px; }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--clay); margin-bottom: 0.3rem; }
+    .subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 2rem; }
+    label { display: block; font-size: 0.85rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--deep); }
+    input { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; margin-bottom: 1.2rem; background: white; }
+    input:focus { outline: none; border-color: var(--clay); }
+    button { width: 100%; padding: 0.85rem; background: var(--clay); color: white; border: none; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; }
+    button:hover { background: #a85c39; }
+    .error { background: #fdecea; color: #c0392b; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.88rem; margin-bottom: 1.2rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="logo">ShareMyStay</div>
+    <div class="subtitle">Admin panel — authorised access only</div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="error">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+    <form method="POST">
+      <label>Username</label>
+      <input type="text" name="username" required autofocus />
+      <label>Password</label>
+      <input type="password" name="password" required />
+      <button type="submit">Log in →</button>
+    </form>
+  </div>
+</body>
+</html>
