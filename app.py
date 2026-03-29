@@ -1,71 +1,47 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "sharemystay-secret"
 
-# Dummy data to simulate listings
-listings = [
-    {
-        "id": 1,
-        "title": "Cozy 2BHK in Bandra",
-        "city": "Mumbai",
-        "price": 1800,
-        "dates": "Jul 10 – Jul 25",
-        "owner": "Priya S.",
-        "verified": True,
-        "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
-    },
-    {
-        "id": 2,
-        "title": "Bright Studio near Koramangala",
-        "city": "Bangalore",
-        "price": 1200,
-        "dates": "Aug 1 – Aug 20",
-        "owner": "Rohan M.",
-        "verified": True,
-        "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80",
-    },
-    {
-        "id": 3,
-        "title": "Spacious Guest Room, Hauz Khas",
-        "city": "Delhi",
-        "price": 900,
-        "dates": "Jul 20 – Aug 5",
-        "owner": "Ananya K.",
-        "verified": False,
-        "image": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
-    },
-    {
-        "id": 4,
-        "title": "Sea-facing 1BHK, Juhu",
-        "city": "Mumbai",
-        "price": 2500,
-        "dates": "Sep 1 – Sep 30",
-        "owner": "Vikram D.",
-        "verified": True,
-        "image": "https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&q=80",
-    },
-    {
-        "id": 5,
-        "title": "Quiet Room in Gated Community",
-        "city": "Hyderabad",
-        "price": 750,
-        "dates": "Aug 15 – Sep 10",
-        "owner": "Sneha P.",
-        "verified": True,
-        "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80",
-    },
-    {
-        "id": 6,
-        "title": "Modern Flat near IT Park",
-        "city": "Pune",
-        "price": 1100,
-        "dates": "Jul 5 – Jul 28",
-        "owner": "Arjun N.",
-        "verified": False,
-        "image": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80",
-    },
-]
+# Database config — creates a file called database.db in your project folder
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
+
+# ---------- DATABASE MODEL ----------
+class Listing(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    name        = db.Column(db.String(100), nullable=False)
+    phone       = db.Column(db.String(20), nullable=False)
+    title       = db.Column(db.String(200), nullable=False)
+    city        = db.Column(db.String(100), nullable=False)
+    type        = db.Column(db.String(100), nullable=False)
+    date_from   = db.Column(db.String(20), nullable=False)
+    date_to     = db.Column(db.String(20), nullable=False)
+    price       = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    verified    = db.Column(db.Boolean, default=False)
+    created_at  = db.Column(db.DateTime, default=datetime.utcnow)
+
+# Create tables + add sample data if empty
+with app.app_context():
+    db.create_all()
+    if Listing.query.count() == 0:
+        samples = [
+            Listing(name="Priya S.", phone="9999999991", title="Cozy 2BHK in Bandra", city="Mumbai", type="Full apartment / flat", date_from="2025-07-10", date_to="2025-07-25", price=1800, description="Beautiful 2BHK in the heart of Bandra with all amenities.", verified=True),
+            Listing(name="Rohan M.", phone="9999999992", title="Bright Studio near Koramangala", city="Bangalore", type="Full apartment / flat", date_from="2025-08-01", date_to="2025-08-20", price=1200, description="Modern studio apartment, 5 min walk from Koramangala.", verified=True),
+            Listing(name="Ananya K.", phone="9999999993", title="Spacious Guest Room, Hauz Khas", city="Delhi", type="Guest room", date_from="2025-07-20", date_to="2025-08-05", price=900, description="Private guest room in a quiet colony near Hauz Khas Village.", verified=False),
+            Listing(name="Vikram D.", phone="9999999994", title="Sea-facing 1BHK, Juhu", city="Mumbai", type="Full apartment / flat", date_from="2025-09-01", date_to="2025-09-30", price=2500, description="Stunning sea view from the balcony. Perfect for a relaxing stay.", verified=True),
+            Listing(name="Sneha P.", phone="9999999995", title="Quiet Room in Gated Community", city="Hyderabad", type="Guest room", date_from="2025-08-15", date_to="2025-09-10", price=750, description="Safe gated community, close to HITEC City.", verified=True),
+            Listing(name="Arjun N.", phone="9999999996", title="Modern Flat near IT Park", city="Pune", type="Full apartment / flat", date_from="2025-07-05", date_to="2025-07-28", price=1100, description="Fully furnished flat, 10 min from Hinjewadi IT Park.", verified=False),
+        ]
+        db.session.add_all(samples)
+        db.session.commit()
+
+# ---------- ROUTES ----------
 
 @app.route("/")
 def home():
@@ -74,20 +50,45 @@ def home():
 @app.route("/stays")
 def stays():
     city_filter = request.args.get("city", "").strip()
-    filtered = [l for l in listings if city_filter.lower() in l["city"].lower()] if city_filter else listings
-    cities = sorted(set(l["city"] for l in listings))
-    return render_template("stays.html", listings=filtered, cities=cities, city_filter=city_filter)
+    if city_filter:
+        listings = Listing.query.filter(Listing.city.ilike(f"%{city_filter}%")).order_by(Listing.created_at.desc()).all()
+    else:
+        listings = Listing.query.order_by(Listing.created_at.desc()).all()
+    cities = sorted(set(l.city for l in Listing.query.all()))
+    return render_template("stays.html", listings=listings, cities=cities, city_filter=city_filter)
 
 @app.route("/list-home", methods=["GET", "POST"])
 def list_home():
     if request.method == "POST":
+        new_listing = Listing(
+            name        = request.form["name"],
+            phone       = request.form["phone"],
+            title       = request.form["title"],
+            city        = request.form["city"],
+            type        = request.form["type"],
+            date_from   = request.form["date_from"],
+            date_to     = request.form["date_to"],
+            price       = int(request.form["price"]),
+            description = request.form.get("description", ""),
+            verified    = False,
+        )
+        db.session.add(new_listing)
+        db.session.commit()
         flash("Your listing has been submitted for review. We'll verify and publish it shortly!", "success")
         return redirect(url_for("list_home"))
     return render_template("list_home.html")
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    total = Listing.query.count()
+    return render_template("about.html", total_listings=total)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=10000, debug=True)
+```
+
+And here's `requirements.txt` — it's just 3 lines:
+```
+flask>=3.0.0
+flask-sqlalchemy>=3.0.0
+gunicorn
