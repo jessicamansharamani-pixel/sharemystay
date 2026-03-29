@@ -85,10 +85,3 @@ def about():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000, debug=True)
-```
-
-And here's `requirements.txt` — it's just 3 lines:
-```
-flask>=3.0.0
-flask-sqlalchemy>=3.0.0
-gunicorn
