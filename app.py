@@ -1,11 +1,16 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = "sharemystay-secret"
 
-# Database config — creates a file called database.db in your project folder
+# ---------- ADMIN CREDENTIALS — change these! ----------
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "sharemystay2024"
+
+# Database config
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -41,7 +46,16 @@ with app.app_context():
         db.session.add_all(samples)
         db.session.commit()
 
-# ---------- ROUTES ----------
+# ---------- ADMIN LOGIN DECORATOR ----------
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("admin_logged_in"):
+            return redirect(url_for("admin_login"))
+        return f(*args, **kwargs)
+    return decorated
+
+# ---------- PUBLIC ROUTES ----------
 
 @app.route("/")
 def home():
@@ -51,10 +65,13 @@ def home():
 def stays():
     city_filter = request.args.get("city", "").strip()
     if city_filter:
-        listings = Listing.query.filter(Listing.city.ilike(f"%{city_filter}%")).order_by(Listing.created_at.desc()).all()
+        listings = Listing.query.filter(
+            Listing.city.ilike(f"%{city_filter}%"),
+            Listing.verified == True
+        ).order_by(Listing.created_at.desc()).all()
     else:
-        listings = Listing.query.order_by(Listing.created_at.desc()).all()
-    cities = sorted(set(l.city for l in Listing.query.all()))
+        listings = Listing.query.filter_by(verified=True).order_by(Listing.created_at.desc()).all()
+    cities = sorted(set(l.city for l in Listing.query.filter_by(verified=True).all()))
     return render_template("stays.html", listings=listings, cities=cities, city_filter=city_filter)
 
 @app.route("/list-home", methods=["GET", "POST"])
@@ -80,9 +97,49 @@ def list_home():
 
 @app.route("/about")
 def about():
-    total = Listing.query.count()
+    total = Listing.query.filter_by(verified=True).count()
     return render_template("about.html", total_listings=total)
+
+# ---------- ADMIN ROUTES ----------
+
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        if request.form["username"] == ADMIN_USERNAME and request.form["password"] == ADMIN_PASSWORD:
+            session["admin_logged_in"] = True
+            return redirect(url_for("admin_dashboard"))
+        flash("Wrong username or password.", "error")
+    return render_template("admin_login.html")
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_logged_in", None)
+    return redirect(url_for("admin_login"))
+
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    pending  = Listing.query.filter_by(verified=False).order_by(Listing.created_at.desc()).all()
+    approved = Listing.query.filter_by(verified=True).order_by(Listing.created_at.desc()).all()
+    return render_template("admin_dashboard.html", pending=pending, approved=approved)
+
+@app.route("/admin/approve/<int:id>")
+@admin_required
+def approve_listing(id):
+    listing = Listing.query.get_or_404(id)
+    listing.verified = True
+    db.session.commit()
+    flash(f'"{listing.title}" has been approved and is now live!', "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/delete/<int:id>")
+@admin_required
+def delete_listing(id):
+    listing = Listing.query.get_or_404(id)
+    db.session.delete(listing)
+    db.session.commit()
+    flash(f'"{listing.title}" has been deleted.', "success")
+    return redirect(url_for("admin_dashboard"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000, debug=True)
-    
