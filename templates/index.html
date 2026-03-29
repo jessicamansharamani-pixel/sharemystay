@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}ShareMyStay – Travel More. Earn While You're Away.{% endblock %}
+
+{% block extra_style %}
+<style>
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    padding: 5rem 5% 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--clay);
+    margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 3.8rem);
+    line-height: 1.15;
+    color: var(--deep);
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 em { color: var(--clay); font-style: normal; }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    max-width: 440px;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .hero-img {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  }
+  .hero-img img { width: 100%; height: 100%; object-fit: cover; }
+  .hero-badge {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    padding: 0.8rem 1.2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .hero-badge .amount { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--clay); }
+  .hero-badge .label { font-size: 0.75rem; color: var(--muted); }
+
+  /* HOW IT WORKS */
+  .section { padding: 5rem 5%; max-width: 1200px; margin: 0 auto; }
+  .section-label { font-size: 0.78rem; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--clay); margin-bottom: 0.75rem; }
+  .section h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--deep); margin-bottom: 3rem; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  .step {
+    background: var(--sand);
+    border-radius: var(--radius);
+    padding: 2rem;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .step h3 { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; }
+  .step p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* WHY */
+  .why-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+  .why-card {
+    background: var(--deep);
+    color: white;
+    border-radius: var(--radius);
+    padding: 2rem;
+  }
+  .why-card:first-child { grid-column: span 2; background: var(--clay); }
+  .why-card .icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .why-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .why-card p { font-size: 0.9rem; opacity: 0.8; line-height: 1.6; }
+
+  /* CTA STRIP */
+  .cta-strip {
+    background: var(--deep);
+    color: white;
+    text-align: center;
+    padding: 5rem 5%;
+    margin: 0;
+  }
+  .cta-strip h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 1rem; }
+  .cta-strip p { color: #aaa; margin-bottom: 2rem; font-size: 1rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <p class="hero-label">Home · Earn · Travel</p>
+    <h1>Your home earns while you <em>explore the world</em></h1>
+    <p>Rent out your home or guest room only for the days you're away — no brokers, no long-term contracts. Your home, your rules, your income.</p>
+    <div class="hero-btns">
+      <a href="/list-home" class="btn btn-primary">List your home</a>
+      <a href="/stays" class="btn btn-outline">Find a stay</a>
+    </div>
+  </div>
+  <div class="hero-img">
+    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80" alt="Beautiful home" />
+    <div class="hero-badge">
+      <div class="amount">₹1,800/night</div>
+      <div class="label">Avg. earning while travelling</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section">
+  <p class="section-label">Simple Process</p>
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>List your home</h3>
+      <p>Add your property for the exact dates you'll be travelling. Upload photos, set your price, and go live in minutes.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>We verify &amp; connect</h3>
+      <p>Our admin team verifies listings and ensures police verification for all renters. Safety first, always.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Earn while you travel</h3>
+      <p>Guests stay in your home while you explore. Come back to a clean home and extra income in your account.</p>
+    </div>
+  </div>
+</div>
+
+<!-- WHY SHAREMYSTAY -->
+<div class="section">
+  <p class="section-label">Why us</p>
+  <h2>Built for Indian homeowners</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <div class="icon">🏡</div>
+      <h3>Short-term only. No lock-ins.</h3>
+      <p>Unlike traditional rentals that demand months of commitment, ShareMyStay is designed for 1-week to 3-month stays — perfect for travel gaps.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">🔐</div>
+      <h3>Verified &amp; trusted</h3>
+      <p>Every listing is admin-verified. Police verification is compulsory for all renters on our platform.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">💸</div>
+      <h3>Direct owner-to-tenant</h3>
+      <p>No middlemen, no broker fees. You talk directly to guests and keep more of what you earn.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA STRIP -->
+<div class="cta-strip">
+  <h2>Don't let your home sit idle</h2>
+  <p>Thousands of Indian homeowners are already turning travel time into earning time.</p>
+  <a href="/list-home" class="btn btn-primary">List your home for free →</a>
+</div>
+
+{% endblock %}

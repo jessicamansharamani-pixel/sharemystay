@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}About – ShareMyStay{% endblock %}
+
+{% block extra_style %}
+<style>
+  .about-hero {
+    background: var(--deep);
+    color: white;
+    padding: 5rem 5%;
+    text-align: center;
+  }
+  .about-hero h1 { font-family: 'Playfair Display', serif; font-size: 3rem; margin-bottom: 1rem; }
+  .about-hero h1 em { color: var(--clay); font-style: normal; }
+  .about-hero p { color: #aaa; max-width: 580px; margin: 0 auto; line-height: 1.7; font-size: 1.05rem; }
+
+  .about-body { max-width: 1100px; margin: 0 auto; padding: 4rem 5%; }
+
+  .problem-sol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+  .ps-card {
+    background: var(--sand);
+    border-radius: var(--radius);
+    padding: 2rem;
+    border: 1px solid var(--border);
+  }
+  .ps-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1rem; }
+  .ps-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+  .ps-card ul li { font-size: 0.92rem; color: var(--muted); display: flex; gap: 0.5rem; }
+  .ps-card ul li::before { content: "→"; color: var(--clay); flex-shrink: 0; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+  .stat-box { text-align: center; padding: 2rem 1rem; background: white; border-radius: var(--radius); border: 1px solid var(--border); }
+  .stat-box .num { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--clay); }
+  .stat-box .desc { font-size: 0.85rem; color: var(--muted); margin-top: 0.3rem; }
+
+  .roadmap h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--deep); margin-bottom: 2rem; }
+  .timeline { display: flex; flex-direction: column; gap: 1px; position: relative; }
+  .tl-item { display: grid; grid-template-columns: 140px 1fr; gap: 2rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+  .tl-phase { font-size: 0.8rem; font-weight: 500; color: var(--clay); letter-spacing: 1px; text-transform: uppercase; padding-top: 3px; }
+  .tl-content h4 { font-weight: 500; margin-bottom: 0.3rem; }
+  .tl-content p { font-size: 0.88rem; color: var(--muted); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="about-hero">
+  <h1>Built for <em>India</em>. Designed for the world.</h1>
+  <p>ShareMyStay started with a simple observation: millions of homes across India sit empty while their owners travel. We built a platform to change that.</p>
+</div>
+
+<div class="about-body">
+
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="num">200+</div>
+      <div class="desc">Target listings/month (Year 1)</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">3</div>
+      <div class="desc">Regions: India, Asia, Middle East</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">₹0</div>
+      <div class="desc">Broker fees, ever</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">100%</div>
+      <div class="desc">Admin-verified listings</div>
+    </div>
+  </div>
+
+  <div class="problem-sol">
+    <div class="ps-card">
+      <h3>The problem we solve</h3>
+      <ul>
+        <li>Homes stay locked and earn nothing during travel</li>
+        <li>Traditional rentals need long-term commitments</li>
+        <li>No brokers support short-term gaps of 1–12 weeks</li>
+        <li>Budget travellers struggle to find flexible, trusted stays</li>
+      </ul>
+    </div>
+    <div class="ps-card">
+      <h3>Our solution</h3>
+      <ul>
+        <li>List your home for exactly the dates you're away</li>
+        <li>Short-term, flexible stays — 1 week to 3 months</li>
+        <li>Direct owner-to-tenant connection, zero middlemen</li>
+        <li>Police verification compulsory for all renters</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="roadmap">
+    <h2>Our roadmap</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-phase">0–6 months</div>
+        <div class="tl-content">
+          <h4>MVP + 1–2 cities</h4>
+          <p>Launch in Mumbai and Bangalore. Core features: listing, discovery, admin moderation, and direct contact.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">6–18 months</div>
+        <div class="tl-content">
+          <h4>India expansion</h4>
+          <p>Roll out to 10+ cities. Add subscriptions for frequent travellers and verified host program.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">18–36 months</div>
+        <div class="tl-content">
+          <h4>Asia & Middle East</h4>
+          <p>Target expat communities and migrant workforce corridors. Localized language and currency support.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">36+ months</div>
+        <div class="tl-content">
+          <h4>Global scale</h4>
+          <p>AI-driven trust and moderation. Standardized core platform with localized compliance worldwide.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}List Your Home – ShareMyStay{% endblock %}
+
+{% block extra_style %}
+<style>
+  .list-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 4rem;
+    padding: 4rem 5%;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .list-info h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--deep); margin-bottom: 1rem; }
+  .list-info h1 em { color: var(--clay); font-style: normal; }
+  .list-info p { color: var(--muted); line-height: 1.7; margin-bottom: 1.5rem; }
+  .perks { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+  .perks li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.92rem; }
+  .perks li .icon { color: var(--clay); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+
+  .form-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+  }
+  .form-card h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--deep); margin-bottom: 1.8rem; }
+  .form-group { margin-bottom: 1.3rem; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text); margin-bottom: 0.4rem; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--clay);
+  }
+  .form-group textarea { resize: vertical; min-height: 90px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-submit { width: 100%; padding: 0.85rem; background: var(--clay); color: white; border: none; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; cursor: pointer; transition: background 0.2s; margin-top: 0.5rem; }
+  .form-submit:hover { background: #a85c39; }
+  .form-note { font-size: 0.78rem; color: var(--muted); text-align: center; margin-top: 0.8rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="list-wrap">
+  <div class="list-info">
+    <h1>Let your home <em>earn</em> while you travel</h1>
+    <p>You're going away — why should your home sit empty? List it on ShareMyStay for just the days you're out, earn real income, and return to a home that's been cared for.</p>
+    <ul class="perks">
+      <li><span class="icon">✅</span> <span>No long-term commitment — list only for your travel dates</span></li>
+      <li><span class="icon">✅</span> <span>Admin-verified platform with police verification for renters</span></li>
+      <li><span class="icon">✅</span> <span>Direct owner-to-guest communication, no middlemen</span></li>
+      <li><span class="icon">✅</span> <span>You set the price, the rules, and who stays</span></li>
+      <li><span class="icon">✅</span> <span>Free to list — we only charge for featured placements</span></li>
+    </ul>
+  </div>
+
+  <div class="form-card">
+    <h2>Submit your listing</h2>
+    <form method="POST" action="/list-home">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your name</label>
+          <input type="text" name="name" placeholder="Priya Sharma" required />
+        </div>
+        <div class="form-group">
+          <label>Mobile number</label>
+          <input type="tel" name="phone" placeholder="+91 98765 43210" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Property title</label>
+        <input type="text" name="title" placeholder="e.g. Cozy 2BHK in Bandra, Mumbai" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>City</label>
+          <select name="city">
+            <option>Mumbai</option>
+            <option>Bangalore</option>
+            <option>Delhi</option>
+            <option>Hyderabad</option>
+            <option>Pune</option>
+            <option>Chennai</option>
+            <option>Kolkata</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Property type</label>
+          <select name="type">
+            <option>Full apartment / flat</option>
+            <option>Guest room</option>
+            <option>Independent house</option>
+            <option>Villa</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Available from</label>
+          <input type="date" name="date_from" required />
+        </div>
+        <div class="form-group">
+          <label>Available till</label>
+          <input type="date" name="date_to" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Price per night (₹)</label>
+        <input type="number" name="price" placeholder="e.g. 1500" min="100" required />
+      </div>
+
+      <div class="form-group">
+        <label>Brief description</label>
+        <textarea name="description" placeholder="Tell guests what makes your place special — amenities, nearby transport, house rules..."></textarea>
+      </div>
+
+      <button type="submit" class="form-submit">Submit for review →</button>
+      <p class="form-note">Our team will review and verify your listing within 24–48 hours.</p>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

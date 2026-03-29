@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Find a Stay – ShareMyStay{% endblock %}
+
+{% block extra_style %}
+<style>
+  .page-header {
+    background: var(--deep);
+    color: white;
+    padding: 3.5rem 5%;
+  }
+  .page-header h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .page-header p { color: #aaa; font-size: 1rem; }
+
+  .filter-bar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.5rem 5%;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .filter-bar label { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+  .filter-bar select, .filter-bar input[type=text] {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: white;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .filter-bar button {
+    background: var(--clay);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .filter-bar a { font-size: 0.85rem; color: var(--muted); text-decoration: none; }
+  .filter-bar a:hover { color: var(--clay); }
+
+  .listings-wrap { padding: 2.5rem 5%; max-width: 1200px; margin: 0 auto; }
+  .results-count { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+  .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.8rem; }
+
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.08); }
+  .card-img { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .card-body { padding: 1.2rem; }
+  .card-city { font-size: 0.75rem; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--clay); margin-bottom: 0.3rem; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--deep); margin-bottom: 0.5rem; }
+  .card-dates { font-size: 0.83rem; color: var(--muted); margin-bottom: 0.8rem; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 0.8rem; border-top: 1px solid var(--border); }
+  .card-price { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--clay); }
+  .card-price span { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--muted); font-weight: 400; }
+  .verified-badge {
+    font-size: 0.72rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    font-weight: 500;
+  }
+  .unverified-badge {
+    font-size: 0.72rem;
+    background: #fff3e0;
+    color: #e65100;
+    padding: 0.25rem 0.6rem;
+    border-radius: 50px;
+    font-weight: 500;
+  }
+  .no-results { text-align: center; padding: 4rem 0; color: var(--muted); }
+  .no-results h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--deep); margin-bottom: 0.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>Find a Stay</h1>
+  <p>Real homes from verified Indian homeowners, available while they travel.</p>
+</div>
+
+<form class="filter-bar" method="GET" action="/stays">
+  <label>Filter by city:</label>
+  <select name="city" onchange="this.form.submit()">
+    <option value="">All cities</option>
+    {% for city in cities %}
+      <option value="{{ city }}" {% if city == city_filter %}selected{% endif %}>{{ city }}</option>
+    {% endfor %}
+  </select>
+  {% if city_filter %}
+    <a href="/stays">✕ Clear filter</a>
+  {% endif %}
+</form>
+
+<div class="listings-wrap">
+  <p class="results-count">{{ listings|length }} stay{{ 's' if listings|length != 1 else '' }} available{% if city_filter %} in {{ city_filter }}{% endif %}</p>
+
+  {% if listings %}
+  <div class="listings-grid">
+    {% for l in listings %}
+    <div class="card">
+      <img class="card-img" src="{{ l.image }}" alt="{{ l.title }}" />
+      <div class="card-body">
+        <p class="card-city">{{ l.city }}</p>
+        <h3 class="card-title">{{ l.title }}</h3>
+        <p class="card-dates">📅 {{ l.dates }} &nbsp;·&nbsp; 👤 {{ l.owner }}</p>
+        <div class="card-footer">
+          <div class="card-price">₹{{ l.price }} <span>/ night</span></div>
+          {% if l.verified %}
+            <span class="verified-badge">✓ Verified</span>
+          {% else %}
+            <span class="unverified-badge">Pending verification</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="no-results">
+    <h3>No stays found in {{ city_filter }}</h3>
+    <p>Try a different city or <a href="/stays" style="color:var(--clay);">browse all listings</a>.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

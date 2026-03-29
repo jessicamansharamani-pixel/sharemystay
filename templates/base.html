@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ShareMyStay{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --clay:    #C4714A;
+      --sand:    #F5EFE6;
+      --deep:    #1C2B1A;
+      --sage:    #6B8C6A;
+      --cream:   #FDFAF6;
+      --text:    #1C2B1A;
+      --muted:   #7A7A6E;
+      --border:  #E2D9CC;
+      --radius:  14px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 5%;
+      border-bottom: 1px solid var(--border);
+      background: var(--cream);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--clay);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--deep); }
+    nav ul { list-style: none; display: flex; gap: 2rem; align-items: center; }
+    nav a { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    nav a:hover, nav a.active { color: var(--text); }
+    .nav-cta {
+      background: var(--clay);
+      color: #fff !important;
+      padding: 0.55rem 1.3rem;
+      border-radius: 50px;
+      font-weight: 500 !important;
+    }
+    .nav-cta:hover { background: #a85c39 !important; }
+
+    /* FLASH MESSAGES */
+    .flash { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 1rem 1.5rem; border-radius: var(--radius); margin: 1.5rem 5%; font-size: 0.95rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--deep);
+      color: #aaa;
+      text-align: center;
+      padding: 2.5rem 5%;
+      font-size: 0.85rem;
+      margin-top: 5rem;
+    }
+    footer strong { color: #fff; }
+    footer a { color: var(--clay); text-decoration: none; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.8rem;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--clay); color: #fff; }
+    .btn-primary:hover { background: #a85c39; transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--clay); border: 1.5px solid var(--clay); }
+    .btn-outline:hover { background: var(--clay); color: #fff; }
+  </style>
+  {% block extra_style %}{% endblock %}
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Share<span>My</span>Stay</a>
+  <ul>
+    <li><a href="/stays" {% if request.path == '/stays' %}class="active"{% endif %}>Find a Stay</a></li>
+    <li><a href="/about" {% if request.path == '/about' %}class="active"{% endif %}>About</a></li>
+    <li><a href="/list-home" class="nav-cta">List Your Home</a></li>
+  </ul>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="flash">✅ {{ message }}</div>
+  {% endfor %}
+{% endwith %}
+
+{% block content %}{% endblock %}
+
+<footer>
+  <p><strong>ShareMyStay</strong> — Travel More. Earn While You're Away.</p>
+  <p style="margin-top:0.5rem;">India → Asia & Middle East → Global &nbsp;|&nbsp; <a href="/list-home">List your home</a> &nbsp;|&nbsp; <a href="/stays">Find a stay</a></p>
+</footer>
+
+</body>
+</html>
